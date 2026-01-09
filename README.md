@@ -149,4 +149,4 @@ ng generate --help
 
 ## 👨‍💻 Developer
 
-Developed with Thanakrit Mangkang
+Developed by Thanakrit Mangkang
