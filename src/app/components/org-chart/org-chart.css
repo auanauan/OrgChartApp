@@ -1,0 +1,489 @@
+.org-chart-container {
+  padding: 0;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0;
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(
+    to left,
+    rgb(198, 18, 72),
+    rgb(140, 21, 87),
+    rgb(117, 22, 94),
+    rgb(84, 23, 101)
+  );
+  border-radius: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+.position-text {
+  color: rgb(84, 23, 101);
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.square-button {
+  width: 48px;
+  height: 48px;
+  min-width: 48px;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.square-button mat-icon {
+  margin: 0;
+  line-height: 1;
+}
+
+.divider-line {
+  border: none;
+  border-top: 2px solid rgb(84, 23, 101);
+  margin: 8px 0 24px 0;
+}
+
+.header-positions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  button {
+    margin: 0;
+  }
+}
+
+.white-button {
+  color: white;
+}
+
+.content {
+  display: flex;
+  gap: 20px;
+  flex: 1;
+  overflow: hidden;
+  padding: 20px;
+}
+
+.positions-panel {
+  width: 350px;
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px 12px 12px 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  order: 2;
+  max-height: calc(100vh - 160px);
+  min-height: 0;
+
+  h2 {
+    margin: 0 0 16px 0;
+    font-size: 18px;
+    font-weight: 500;
+  }
+
+  .position-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex: 1;
+    min-height: 0;
+    padding-right: 8px;
+  }
+
+  .position-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: move;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #e3f2fd;
+      border-color: #2196f3;
+      transform: translateX(4px);
+    }
+
+    .drag-handle {
+      color: #9e9e9e;
+      cursor: grab;
+    }
+
+    .position-info {
+      flex: 1;
+
+      .position-name {
+        font-weight: 500;
+        font-size: 14px;
+        color: #333;
+      }
+
+      .position-code {
+        font-size: 12px;
+        color: #666;
+        margin-top: 2px;
+      }
+    }
+  }
+}
+
+.chart-panel {
+  flex: 1;
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  order: 1;
+
+  .levels-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .level-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+
+    .level-label {
+      min-width: 80px;
+      padding: 8px 12px;
+      background: rgb(84, 23, 101);
+      color: white;
+      border-radius: 6px;
+      font-weight: 500;
+      text-align: center;
+      height: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+
+      .delete-level-button {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        min-width: 20px;
+        color: white;
+        background: rgba(211, 47, 47, 0.95);
+        border-radius: 50%;
+        opacity: 0;
+        transition: all 0.2s;
+
+        &:hover {
+          opacity: 1 !important;
+          background: rgba(211, 47, 47, 1);
+          transform: scale(1.1);
+        }
+
+        mat-icon {
+          font-size: 14px;
+          width: 14px;
+          height: 14px;
+          line-height: 14px;
+        }
+      }
+
+      &:hover .delete-level-button {
+        opacity: 1;
+      }
+    }
+
+    .level-drop-zone {
+      flex: 1;
+      min-height: 80px;
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-content: flex-start;
+      transition: all 0.3s;
+      position: relative;
+
+      &.empty {
+        justify-content: center;
+        align-items: center;
+      }
+
+      &.cdk-drop-list-dragging {
+        background: #e3f2fd;
+        border-color: #2196f3;
+      }
+
+      .placeholder {
+        color: #999;
+        font-style: italic;
+      }
+
+      .node-item {
+        position: relative;
+        padding: 18px 20px;
+        background: white;
+        color: #2c3e50;
+        border-radius: 12px;
+        min-width: 200px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s;
+        border: 1px solid #e0e0e0;
+        border-bottom: 4px solid #e91e63;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        &.hovered {
+          box-shadow: 0 0 0 6px rgba(233, 30, 99, 0.2),
+                      0 0 40px rgba(233, 30, 99, 0.35),
+                      0 4px 20px rgba(0, 0, 0, 0.15);
+          transform: translateY(-3px);
+        }
+
+        &.parent-highlight {
+          box-shadow: 0 0 0 5px rgba(156, 39, 176, 0.2),
+                      0 0 30px rgba(156, 39, 176, 0.3);
+        }
+
+        &.child-highlight {
+          box-shadow: 0 0 0 5px rgba(33, 150, 243, 0.2),
+                      0 0 30px rgba(33, 150, 243, 0.3);
+        }
+
+        .node-content {
+          .node-name {
+            font-weight: 700;
+            font-size: 17px;
+            margin-bottom: 6px;
+            color: #1e3a5f;
+            display: block;
+            text-align: center;
+          }
+
+          .node-code {
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+            text-align: center;
+            display: block;
+          }
+
+          .node-info {
+            margin-top: 12px;
+            font-size: 12px;
+            opacity: 0.85;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            padding-top: 10px;
+            color: #546e7a;
+
+            .parent-info,
+            .children-info {
+              margin: 4px 0;
+            }
+          }
+        }
+
+        .delete-button {
+          position: absolute;
+          top: -8px;
+          right: -8px;
+          width: 24px;
+          height: 24px;
+          min-width: 24px;
+          padding: 0;
+          background: rgba(244, 67, 54, 0.95);
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(244, 67, 54, 0.4);
+
+          &:hover {
+            background: rgba(244, 67, 54, 1);
+            transform: scale(1.1);
+          }
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            line-height: 16px;
+            color: white;
+          }
+        }
+
+        .relation-badges {
+          position: absolute;
+          top: -16px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          gap: 8px;
+          pointer-events: none;
+        }
+
+        .badge {
+          padding: 4px 8px;
+          border-radius: 12px;
+          font-size: 11px;
+          font-weight: 600;
+          color: #fff;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+          text-transform: uppercase;
+        }
+
+        .badge.parent {
+          background: linear-gradient(135deg, #0d47a1 0%, #42a5f5 100%);
+        }
+
+        .badge.child {
+          background: linear-gradient(135deg, #ad1457 0%, #ec407a 100%);
+        }
+      }
+    }
+  }
+}
+
+.cdk-drag-preview {
+  opacity: 0.8;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+::ng-deep {
+  .success-snackbar {
+    background: #4caf50 !important;
+    color: white !important;
+  }
+
+  .error-snackbar {
+    background: #f44336 !important;
+    color: white !important;
+  }
+}
+
+/* ปรับ chart-panel ให้รองรับ SVG overlay */
+.chart-panel {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  position: relative;
+}
+
+/* SVG สำหรับวาดเส้นเชื่อม */
+.connections-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ปรับ levels-container */
+.levels-container {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  min-height: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+/* ปรับ level-drop-zone ให้จัด nodes ตรงกลาง */
+.level-drop-zone {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 30px;
+  flex-wrap: wrap;
+  min-height: 100px;
+  padding: 20px;
+}
+
+/* ทำให้ node-item มี relative position */
+.node-item {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Footer */
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  background-color: #f5f5f5;
+  border-top: 1px solid #ddd;
+}
+
+.add-pill-button {
+  border-radius: 24px !important;
+  border-color: #c61248 !important;
+  color: #c61248 !important;
+  min-width: 80px !important;
+  height: 48px !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  font-size: 16px !important;
+}
+
+.add-pill-button mat-icon {
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+
+.save-button {
+  height: 48px !important;
+  padding: 0 48px !important;
+  font-size: 16px;
+  border-radius: 24px !important;
+  background: linear-gradient(to left, #c61248, #8c1557, #75165e, #541765) !important;
+  color: white !important;
+  font-weight: 500;
+  text-transform: none;
+  display: flex !important;
+  align-items: center !important;
+  line-height: 1 !important;
+}

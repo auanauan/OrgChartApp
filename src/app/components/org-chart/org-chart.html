@@ -1,0 +1,138 @@
+<div class="org-chart-container">
+  <div class="header">
+    <button mat-icon-button class="white-button">
+      <mat-icon>menu</mat-icon>
+    </button>
+    <div class="header-actions">
+      <button mat-icon-button>
+        <img src="https://flagcdn.com/w20/us.png" alt="US" style="width: 30px; height: auto" />
+      </button>
+      <button mat-icon-button style="color: white">
+        <mat-icon style="font-size: 3vh">fullscreen</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="positions-panel">
+      <div class="header-positions">
+        <p class="position-text">Position</p>
+        <button mat-stroked-button class="square-button" (click)="openPositionDialog()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+      <hr class="divider-line" />
+      <div
+        cdkDropList
+        [cdkDropListData]="positions"
+        id="position-list"
+        [cdkDropListConnectedTo]="getConnectedLists()"
+        class="position-list"
+        [cdkDropListSortingDisabled]="true"
+      >
+        <div
+          *ngFor="let position of positions"
+          cdkDrag
+          [cdkDragData]="{ position: position }"
+          (cdkDragMoved)="onNodeDrag($event)"
+          class="position-item"
+        >
+          <mat-icon class="drag-handle" cdkDragHandle>drag_indicator</mat-icon>
+          <div class="position-info">
+            <div class="position-name">{{ position.name }}</div>
+            <div class="position-code">{{ position.code }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-panel" #chartPanel>
+      <svg class="connections-svg" #connectionsSvg>
+        <defs>
+          <marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+            <polygon points="0 0, 8 4, 0 8" fill="context-stroke" />
+          </marker>
+        </defs>
+      </svg>
+
+      <div class="levels-container" #levelsContainer>
+        <div *ngFor="let level of levels" class="level-row">
+          <div class="level-label">
+            <span>Level {{ level.levelNumber }}</span>
+            <button
+              *ngIf="level.levelNumber > 1"
+              mat-icon-button
+              class="delete-level-button"
+              (click)="onDeleteLevel(level, $event)"
+              matTooltip="Delete Level">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <div
+            cdkDropList
+            [cdkDropListData]="level.nodes"
+            [id]="'level-' + level.levelNumber"
+            [cdkDropListConnectedTo]="getConnectedLists()"
+            (cdkDropListDropped)="onDrop($event, level)"
+            class="level-drop-zone"
+            [class.empty]="level.nodes.length === 0"
+          >
+            <div class="placeholder" *ngIf="level.nodes.length === 0">Drop position here</div>
+
+            <div
+              *ngFor="let node of level.nodes"
+              [id]="'node-' + node.id"
+              class="node-item"
+              [style.border-bottom-color]="getNodeBorderColor(node.id)"
+              cdkDrag
+              [cdkDragData]="{ node: node }"
+              (cdkDragMoved)="onNodeDrag($event)"
+              [class.hovered]="hoveredNodeId === node.id"
+              [ngClass]="getNodeHighlightClass(node.id)"
+              (mouseenter)="onNodeHover(node.id)"
+              (mouseleave)="onNodeHover(null)"
+            >
+              <div class="relation-badges" *ngIf="hoveredNodeId === node.id">
+                <span class="badge parent" *ngIf="getNodeParent(node) as parent"
+                  >Parent: {{ parent.positionName }}</span
+                >
+                <span class="badge child" *ngIf="getNodeChildren(node.id).length > 0"
+                  >Children: {{ getNodeChildren(node.id).length }}</span
+                >
+              </div>
+              <div class="node-content">
+                <div class="node-name">{{ node.positionName }}</div>
+                <div class="node-code">{{ getPositionCode(node) }}</div>
+                <div class="node-info" *ngIf="hoveredNodeId === node.id">
+                  <div *ngIf="getNodeParent(node) as parent" class="parent-info">
+                    Parent: {{ parent.positionName }}
+                  </div>
+                  <div *ngIf="getNodeChildren(node.id).length > 0" class="children-info">
+                    Children: {{ getNodeChildren(node.id).length }}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                *ngIf="hoveredNodeId === node.id"
+                mat-icon-button
+                class="delete-button"
+                (click)="onDeleteNode(node, $event)"
+                color="warn"
+              >
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <button mat-stroked-button class="add-pill-button" (click)="onAddLevel()">
+          <mat-icon>add</mat-icon>
+        </button>
+        <button mat-raised-button color="primary" class="save-button" (click)="onSaveAll()">Save all</button>
+      </div>
+    </div>
+  </div>
+</div>
